@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.crawler4j.examples.mine;
+package edu.uci.ics.crawler4j.examples.blog.mine;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -31,8 +31,8 @@ import java.util.Collections;
 /**
  * @author Yasser Ganjisaffar
  */
-public class MineCrawlController {
-    private static final Logger logger = LoggerFactory.getLogger(MineCrawlController.class);
+public class BlogCrawlController {
+    private static final Logger logger = LoggerFactory.getLogger(BlogCrawlController.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -62,7 +62,7 @@ public class MineCrawlController {
          * You can set the maximum crawl depth here. The default value is -1 for
          * unlimited depth
          */
-        config.setMaxDepthOfCrawling(2);
+        config.setMaxDepthOfCrawling(0);
 
         /*
          * You can set the maximum number of pages to crawl. The default value
@@ -94,9 +94,6 @@ public class MineCrawlController {
          */
         config.setResumableCrawling(false);
 
-        AjaxAuthInfo ajaxAuthInfo = new AjaxAuthInfo("http://www.aiipu.com:8083/superapp/mobiledata?action=LoginBean.login", "data", "");
-        config.setAuthInfos(Collections.singletonList(ajaxAuthInfo));
-
         /*
          * Instantiate the controller for this crawl.
          */
@@ -110,12 +107,12 @@ public class MineCrawlController {
          * URLs that are fetched and then the crawler starts following links
          * which are found in these pages
          */
-        controller.addSeed("http://work.asiainfo.com/home/");
+        controller.addSeed("https://justice-love.com/");
 
         /*
          * Start the crawl. This is a blocking operation, meaning that your code
          * will reach the line after this only when crawling is finished.
          */
-        controller.start(MineCrawler.class, numberOfCrawlers);
+        controller.start(BlogCrawler.class, numberOfCrawlers);
     }
 }

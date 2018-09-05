@@ -1,4 +1,4 @@
-package edu.uci.ics.crawler4j.examples.mine;
+package edu.uci.ics.crawler4j.examples.blog.mine;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -9,7 +9,7 @@ import org.apache.http.Header;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class MineCrawler extends WebCrawler {
+public class BlogCrawler extends WebCrawler {
 
     private static final Pattern STATIC_EXTENSIONS = Pattern.compile(".*\\.(css|js|bmp|gif|jpg|png)$");
 
@@ -20,7 +20,7 @@ public class MineCrawler extends WebCrawler {
             return false;
         }
 
-        return href.startsWith("http://work.asiainfo.com/home/");
+        return href.startsWith("https://justice-love.com/");
     }
 
     @Override

@@ -169,13 +169,8 @@ public class PageFetcher {
                     .filter(info ->
                             AuthInfo.AuthenticationType.FORM_AUTHENTICATION.equals(info.getAuthenticationType()))
                     .map(FormAuthInfo.class::cast)
-                    .forEach(this::doFormLogin);
+                    .forEach(formAuthInfo -> formAuthInfo.login(httpClient));
 
-            authInfos.stream()
-                    .filter(info ->
-                            AuthInfo.AuthenticationType.AJAX_AUTHENTICATION.equals(info.getAuthenticationType()))
-                    .map(AjaxAuthInfo.class::cast)
-                    .forEach(this::doAjaxLogin);
         } else {
             httpClient = clientBuilder.build();
         }
@@ -186,30 +181,6 @@ public class PageFetcher {
         connectionMonitorThread.start();
     }
 
-    private void doAjaxLogin(AjaxAuthInfo authInfo) {
-        logger.info("ajax authentication for: {}", authInfo.getLoginTarget());
-        String fullUri =
-                authInfo.getProtocol() + "://" + authInfo.getHost() + ":" + authInfo.getPort() +
-                        authInfo.getLoginTarget();
-        HttpPost httpPost = new HttpPost(fullUri);
-        List<NameValuePair> formParams = new ArrayList<>();
-        formParams.add(
-                new BasicNameValuePair(authInfo.getKey(), authInfo.getJson()));
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8);
-        httpPost.setEntity(entity);
-
-        try {
-            httpClient.execute(httpPost);
-            logger.debug("Successfully request to login in with json: {} to: {}", authInfo.getJson(),
-                    authInfo.getHost());
-        } catch (ClientProtocolException e) {
-            logger.error("While trying to login to: {} - Client protocol not supported",
-                    authInfo.getHost(), e);
-        } catch (IOException e) {
-            logger.error("While trying to login to: {} - Error making request", authInfo.getHost(),
-                    e);
-        }
-    }
 
     /**
      * BASIC authentication<br/>
@@ -236,38 +207,6 @@ public class PageFetcher {
             credentialsMap.put(new AuthScope(authInfo.getHost(), authInfo.getPort()), credentials);
         } catch (UnknownHostException e) {
             logger.error("Error creating NT credentials", e);
-        }
-    }
-
-    /**
-     * FORM authentication<br/>
-     * Official Example: https://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org
-     * /apache/http/examples/client/ClientFormLogin.java
-     */
-    private void doFormLogin(FormAuthInfo authInfo) {
-        logger.info("FORM authentication for: {}", authInfo.getLoginTarget());
-        String fullUri =
-                authInfo.getProtocol() + "://" + authInfo.getHost() + ":" + authInfo.getPort() +
-                        authInfo.getLoginTarget();
-        HttpPost httpPost = new HttpPost(fullUri);
-        List<NameValuePair> formParams = new ArrayList<>();
-        formParams.add(
-                new BasicNameValuePair(authInfo.getUsernameFormStr(), authInfo.getUsername()));
-        formParams.add(
-                new BasicNameValuePair(authInfo.getPasswordFormStr(), authInfo.getPassword()));
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8);
-        httpPost.setEntity(entity);
-
-        try {
-            httpClient.execute(httpPost);
-            logger.debug("Successfully request to login in with user: {} to: {}", authInfo.getUsername(),
-                    authInfo.getHost());
-        } catch (ClientProtocolException e) {
-            logger.error("While trying to login to: {} - Client protocol not supported",
-                    authInfo.getHost(), e);
-        } catch (IOException e) {
-            logger.error("While trying to login to: {} - Error making request", authInfo.getHost(),
-                    e);
         }
     }
 

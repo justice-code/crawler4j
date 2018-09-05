@@ -11,16 +11,16 @@ import java.util.regex.Pattern;
 
 public class MineCrawler extends WebCrawler {
 
-    private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
+    private static final Pattern STATIC_EXTENSIONS = Pattern.compile(".*\\.(css|js|bmp|gif|jpg|png)$");
 
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
         String href = url.getURL().toLowerCase();
-        if (IMAGE_EXTENSIONS.matcher(href).matches()) {
+        if (STATIC_EXTENSIONS.matcher(href).matches()) {
             return false;
         }
 
-        return href.startsWith("https://justice-love.com/");
+        return href.startsWith("http://www.aiipu.com:8083");
     }
 
     @Override

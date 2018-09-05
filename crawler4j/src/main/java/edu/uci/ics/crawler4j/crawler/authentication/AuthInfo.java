@@ -19,7 +19,8 @@ public abstract class AuthInfo {
     public enum AuthenticationType {
         BASIC_AUTHENTICATION,
         FORM_AUTHENTICATION,
-        NT_AUTHENTICATION
+        NT_AUTHENTICATION,
+        AJAX_AUTHENTICATION
     }
 
     protected AuthenticationType authenticationType;

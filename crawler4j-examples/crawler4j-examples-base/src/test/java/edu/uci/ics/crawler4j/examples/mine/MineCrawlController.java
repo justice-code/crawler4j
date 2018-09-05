@@ -19,11 +19,14 @@ package edu.uci.ics.crawler4j.examples.mine;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
+import edu.uci.ics.crawler4j.crawler.authentication.AjaxAuthInfo;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
 
 /**
  * @author Yasser Ganjisaffar
@@ -91,6 +94,9 @@ public class MineCrawlController {
          */
         config.setResumableCrawling(false);
 
+        AjaxAuthInfo ajaxAuthInfo = new AjaxAuthInfo("http://www.aiipu.com:8083/superapp/mobiledata?action=LoginBean.login", "data", "{\"USER_ACCOUNT\":\"xuyi3\",\"USER_PASSWORD\":\"taobao@1234\",\"SESSION_ID\":\"\"}");
+        config.setAuthInfos(Collections.singletonList(ajaxAuthInfo));
+
         /*
          * Instantiate the controller for this crawl.
          */
@@ -104,7 +110,7 @@ public class MineCrawlController {
          * URLs that are fetched and then the crawler starts following links
          * which are found in these pages
          */
-        controller.addSeed("https://justice-love.com/");
+        controller.addSeed("http://www.aiipu.com:8083/superapp/mobile?action=Home");
 
         /*
          * Start the crawl. This is a blocking operation, meaning that your code

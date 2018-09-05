@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
 
+import edu.uci.ics.crawler4j.crawler.authentication.*;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
@@ -63,10 +64,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
-import edu.uci.ics.crawler4j.crawler.authentication.AuthInfo;
-import edu.uci.ics.crawler4j.crawler.authentication.BasicAuthInfo;
-import edu.uci.ics.crawler4j.crawler.authentication.FormAuthInfo;
-import edu.uci.ics.crawler4j.crawler.authentication.NtAuthInfo;
 import edu.uci.ics.crawler4j.crawler.exceptions.PageBiggerThanMaxSizeException;
 import edu.uci.ics.crawler4j.url.URLCanonicalizer;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -173,6 +170,12 @@ public class PageFetcher {
                             AuthInfo.AuthenticationType.FORM_AUTHENTICATION.equals(info.getAuthenticationType()))
                     .map(FormAuthInfo.class::cast)
                     .forEach(this::doFormLogin);
+
+            authInfos.stream()
+                    .filter(info ->
+                            AuthInfo.AuthenticationType.AJAX_AUTHENTICATION.equals(info.getAuthenticationType()))
+                    .map(AjaxAuthInfo.class::cast)
+                    .forEach(this::doAjaxLogin);
         } else {
             httpClient = clientBuilder.build();
         }
@@ -181,6 +184,31 @@ public class PageFetcher {
             connectionMonitorThread = new IdleConnectionMonitorThread(connectionManager);
         }
         connectionMonitorThread.start();
+    }
+
+    private void doAjaxLogin(AjaxAuthInfo authInfo) {
+        logger.info("ajax authentication for: {}", authInfo.getLoginTarget());
+        String fullUri =
+                authInfo.getProtocol() + "://" + authInfo.getHost() + ":" + authInfo.getPort() +
+                        authInfo.getLoginTarget();
+        HttpPost httpPost = new HttpPost(fullUri);
+        List<NameValuePair> formParams = new ArrayList<>();
+        formParams.add(
+                new BasicNameValuePair(authInfo.getKey(), authInfo.getJson()));
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8);
+        httpPost.setEntity(entity);
+
+        try {
+            httpClient.execute(httpPost);
+            logger.debug("Successfully request to login in with json: {} to: {}", authInfo.getJson(),
+                    authInfo.getHost());
+        } catch (ClientProtocolException e) {
+            logger.error("While trying to login to: {} - Client protocol not supported",
+                    authInfo.getHost(), e);
+        } catch (IOException e) {
+            logger.error("While trying to login to: {} - Error making request", authInfo.getHost(),
+                    e);
+        }
     }
 
     /**

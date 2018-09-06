@@ -9,24 +9,20 @@ import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class AjaxAuthInfo extends FormAuthInfo {
+public class MultiAuthInfo extends FormAuthInfo{
+    private Map<String, String> kvs;
 
-    private String key;
-    private String json;
-
-    public AjaxAuthInfo(String loginUrl, String key, String json) throws MalformedURLException {
+    public MultiAuthInfo(String loginUrl, Map<String, String> kvs) throws MalformedURLException {
         super(null, null, loginUrl, null, null);
-        this.key = key;
-        this.json = json;
+        this.kvs = kvs;
     }
 
     @Override
     protected HttpEntity createEntity() {
         List<NameValuePair> formParams = new ArrayList<>();
-        formParams.add(
-                new BasicNameValuePair(this.key, this.json));
+        kvs.forEach((key, value) -> formParams.add(new BasicNameValuePair(key, value)));
         return new UrlEncodedFormEntity(formParams, StandardCharsets.UTF_8);
     }
-
 }

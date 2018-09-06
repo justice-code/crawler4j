@@ -1,0 +1,28 @@
+allprojects  {
+  apply plugin: 'maven'
+
+  group = 'edu.uci.ics'
+version = '4.5.0-SNAPSHOT'
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.5
+  targetCompatibility = 1.5
+  tasks.withType(JavaCompile) {
+  	options.encoding = 'UTF-8'
+  }
+
+  
+  repositories {
+    mavenLocal()
+    
+    maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "http://download.oracle.com/maven" }
+    maven { url "https://palantir.bintray.com/releases" }
+  }
+
+  
+  
+  
+}

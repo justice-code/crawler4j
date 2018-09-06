@@ -1,0 +1,59 @@
+
+description = 'edu.uci.ics:crawler4j'
+dependencies {
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.22'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.5.5'
+    compile group: 'com.sleepycat', name: 'je', version:'5.0.84'
+    compile(group: 'org.apache.tika', name: 'tika-parsers', version:'1.17') {
+exclude(module: 'poi')
+exclude(module: 'poi-ooxml')
+exclude(module: 'poi-scratchpad')
+exclude(module: 'poi-ooxml')
+exclude(module: 'poi-ooxml-schemas')
+exclude(module: 'pdfbox')
+exclude(module: 'pdfbox-tools')
+exclude(module: 'jempbox')
+exclude(module: 'jmatio')
+exclude(module: 'jackcess')
+exclude(module: 'jackcess-encrypt')
+exclude(module: 'xz')
+exclude(module: 'junrar')
+exclude(module: 'opennlp-tools')
+exclude(module: 'sis-utility')
+exclude(module: 'sis-netcdf')
+exclude(module: 'sis-metadata')
+exclude(module: 'geoapi')
+exclude(module: 'java-libpst')
+exclude(module: 'rome')
+exclude(module: 'json')
+exclude(module: 'netcdf4')
+exclude(module: 'grib')
+exclude(module: 'cdm')
+exclude(module: 'httpservices')
+exclude(module: 'vorbis-java-tika')
+exclude(module: 'vorbis-java-core')
+exclude(module: 'asm')
+exclude(module: 'isoparser')
+exclude(module: 'metadata-extractor')
+exclude(module: 'commons-csv')
+exclude(module: 'commons-exec')
+exclude(module: 'commons-compress')
+exclude(module: 'commons-codec')
+exclude(module: 'json-simple')
+exclude(module: 'gson')
+exclude(module: 'boilerpipe')
+exclude(module: 'juniversalchardet')
+exclude(module: 'jhighlight')
+exclude(module: 'bcmail-jdk15on')
+exclude(module: 'bcprov-jdk15on')
+exclude(module: 'cxf-rt-rs-client')
+exclude(module: 'jackson-core')
+exclude(module: 'json')
+exclude(module: 'sentiment-analysis-parser')
+    }
+    runtime group: 'ch.qos.logback', name: 'logback-classic', version:'1.1.7'
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.14.0'
+    testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version:'2.4.12'
+    testCompile group: 'org.spockframework', name: 'spock-core', version:'1.0-groovy-2.4'
+}

@@ -2,5 +2,5 @@
 description = 'edu.uci.ics:crawler4j-examples-base'
 dependencies {
   compile project(':crawler4j')
-    compile group: 'com.google.guava', name: 'guava', version:'24.0-jre'
+  compile group: 'com.google.guava', name: 'guava', version:'24.0-jre'
 }

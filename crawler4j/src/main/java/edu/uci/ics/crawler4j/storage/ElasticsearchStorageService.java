@@ -3,6 +3,9 @@ package edu.uci.ics.crawler4j.storage;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
@@ -20,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,12 +47,7 @@ public class ElasticsearchStorageService implements StorageService{
 
     @Override
     public void store(Page page) {
-        XContentBuilder builder = null;
-        try {
-            builder = content(page);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        XContentBuilder builder = content(page);
 
         IndexResponse indexResponse = client.prepareIndex("crawl_storage", "page").setSource(builder).get();
 
@@ -58,28 +57,43 @@ public class ElasticsearchStorageService implements StorageService{
 
     @Override
     public void bulk(List<Page> pages) {
+        BulkRequestBuilder bulkRequest = client.prepareBulk();
+        pages.forEach(page -> {
+            XContentBuilder builder = content(page);
+            bulkRequest.add(client.prepareIndex("crawl_storage", "page").setSource(builder));
+
+        });
+        BulkResponse responses = bulkRequest.get();
+        if (responses.hasFailures()) {
+            Arrays.stream(responses.getItems()).filter(BulkItemResponse::isFailed).forEach(bulkItemResponse -> logger.error(bulkItemResponse.getFailureMessage()));
+        }
 
     }
 
-    private XContentBuilder content(Page page) throws IOException {
-        XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
-                .field("docId", page.getWebURL().getDocid())
-                .field("url", page.getWebURL().getURL())
-                .field("domain", page.getWebURL().getDomain())
-                .field("subDomain", page.getWebURL().getSubDomain())
-                .field("path", page.getWebURL().getPath())
-                .field("parentUrl", page.getWebURL().getParentUrl())
-                .field("anchor", page.getWebURL().getAnchor())
-                .field("timestamp", LocalDateTime.now(ZoneId.of("Asia/Shanghai")).atOffset(ZoneOffset.ofHours(8)).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+    private XContentBuilder content(Page page) {
+        try {
+            XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
+                    .field("docId", page.getWebURL().getDocid())
+                    .field("url", page.getWebURL().getURL())
+                    .field("domain", page.getWebURL().getDomain())
+                    .field("subDomain", page.getWebURL().getSubDomain())
+                    .field("path", page.getWebURL().getPath())
+                    .field("parentUrl", page.getWebURL().getParentUrl())
+                    .field("anchor", page.getWebURL().getAnchor())
+                    .field("timestamp", LocalDateTime.now(ZoneId.of("Asia/Shanghai")).atOffset(ZoneOffset.ofHours(8)).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
-        if (page.getParseData() instanceof HtmlParseData) {
-            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-            builder.field("text", htmlParseData.getText())
-                    .field("html", htmlParseData.getHtml())
-                    .field("links", htmlParseData.getOutgoingUrls().stream().map(WebURL::getURL).collect(Collectors.toList()));
+            if (page.getParseData() instanceof HtmlParseData) {
+                HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+                builder.field("text", htmlParseData.getText())
+                        .field("html", htmlParseData.getHtml())
+                        .field("links", htmlParseData.getOutgoingUrls().stream().map(WebURL::getURL).collect(Collectors.toList()));
+            }
+
+            return builder.endObject();
+        } catch (IOException e) {
+            logger.error("content error", e);
+            throw new RuntimeException(e);
         }
-
-        return builder.endObject();
     }
 
     @Override
@@ -88,4 +102,5 @@ public class ElasticsearchStorageService implements StorageService{
             client.close();
         }
     }
+
 }

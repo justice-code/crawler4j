@@ -27,6 +27,7 @@ import edu.uci.ics.crawler4j.task.TaskConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,6 +41,9 @@ public class BlogCrawlController {
     @Autowired
     private TaskConsumer consumer;
 
+    @Value("${com.ipu.path}")
+    private String path;
+
     @RequestMapping("/blog")
     public void blogCrawl() throws Exception {
 
@@ -47,7 +51,7 @@ public class BlogCrawlController {
          * crawlStorageFolder is a folder where intermediate crawl data is
          * stored.
          */
-        String crawlStorageFolder = "/Users/xuyi/Desktop/crawl";
+        String crawlStorageFolder = path;
 
         /*
          * numberOfCrawlers shows the number of concurrent threads that should

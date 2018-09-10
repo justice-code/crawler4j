@@ -15,26 +15,27 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.crawler4j.examples.blog.mine;
+package edu.uci.ics.crawler4j.demo;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
-import edu.uci.ics.crawler4j.crawler.authentication.AjaxAuthInfo;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Yasser Ganjisaffar
  */
+@RestController
 public class BlogCrawlController {
     private static final Logger logger = LoggerFactory.getLogger(BlogCrawlController.class);
 
-    public static void main(String[] args) throws Exception {
+    @RequestMapping("/blog")
+    public void blogCrawl() throws Exception {
 
         /*
          * crawlStorageFolder is a folder where intermediate crawl data is

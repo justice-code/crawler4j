@@ -1,4 +1,19 @@
 
+buildscript {
+    ext {
+        springBootVersion = '2.0.3.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframeworkRestApplication.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
 description = 'edu.uci.ics:crawler4j'
 dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.22'
@@ -57,4 +72,7 @@ dependencies {
     testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version:'2.4.12'
     testCompile group: 'org.spockframework', name: 'spock-core', version:'1.0-groovy-2.4'
     compile group: 'org.elasticsearch.client', name: 'transport', version: '6.4.0'
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compileOnly('org.projectlombok:lombok')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }

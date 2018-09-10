@@ -22,8 +22,11 @@ import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import edu.uci.ics.crawler4j.task.ControllerTask;
+import edu.uci.ics.crawler4j.task.TaskConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BlogCrawlController {
     private static final Logger logger = LoggerFactory.getLogger(BlogCrawlController.class);
+
+    @Autowired
+    private TaskConsumer consumer;
 
     @RequestMapping("/blog")
     public void blogCrawl() throws Exception {
@@ -114,6 +120,7 @@ public class BlogCrawlController {
          * Start the crawl. This is a blocking operation, meaning that your code
          * will reach the line after this only when crawling is finished.
          */
-        controller.start(BlogCrawler.class, numberOfCrawlers);
+//        controller.start(BlogCrawler.class, numberOfCrawlers);
+        consumer.offer(new ControllerTask(controller, BlogCrawler.class, numberOfCrawlers));
     }
 }

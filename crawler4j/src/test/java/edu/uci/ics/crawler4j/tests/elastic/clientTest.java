@@ -2,6 +2,7 @@ package edu.uci.ics.crawler4j.tests.elastic;
 
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class clientTest {
     public void test() throws IOException {
 
         TransportClient client = new PreBuiltTransportClient(Settings.EMPTY)
-                .addTransportAddress(new TransportAddress(InetAddress.getByName("localhost"), 9301));
+                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9301));
         client.prepareIndex("user_test", "user").setSource(jsonBuilder()
                 .startObject()
                 .field("name", "xuyi")

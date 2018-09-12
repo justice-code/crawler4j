@@ -9,7 +9,6 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -40,7 +39,7 @@ public class ElasticsearchStorageService implements StorageService{
     private void init() {
         try {
             client = new PreBuiltTransportClient(Settings.EMPTY)
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9301));
+                    .addTransportAddress(new TransportAddress(InetAddress.getByName("localhost"), 9301));
         } catch (UnknownHostException ignore) { }
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));

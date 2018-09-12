@@ -78,11 +78,14 @@ public class PageFetcher {
      * This field is protected for retro compatibility. Please use the getter method: getConfig() to
      * read this field;
      */
-    protected final CrawlConfig config;
+    protected CrawlConfig config;
     protected PoolingHttpClientConnectionManager connectionManager;
     protected CloseableHttpClient httpClient;
     protected long lastFetchTime = 0;
     protected IdleConnectionMonitorThread connectionMonitorThread = null;
+
+    public PageFetcher() {
+    }
 
     public PageFetcher(CrawlConfig config) {
         this.config = config;
